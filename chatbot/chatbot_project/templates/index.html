@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #chatbox {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #messageInput {
+            width: 70%;
+            padding: 8px;
+        }
+
+        #sendButton {
+            width: 28%;
+            padding: 8px;
+            margin-left: 2%;
+        }
+
+        .userText, .botText {
+            margin-bottom: 5px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> 
+</head>
+
+<body>
+    <h1>Chatbot App</h1>
+
+    <div id="chatbox"></div>
+
+    <form id="chatForm">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button type="button" id="sendButton" onclick="sendMessage()">Send</button>
+    </form>
+
+    <script>
+        function sendMessage() {
+            var messageInput = $('#messageInput');
+            var chatbox = $('#chatbox');
+            var userMessage = messageInput.val();
+            chatbox.append('<p class="userText"><strong>You:</strong> ' + userMessage + '</p>');
+            messageInput.val('');
+            getUserResponse(userMessage);
+        }
+
+        function getUserResponse(userText) {
+            var userHTML = '<p class="userText"><strong>User:</strong><span>' + userText + '</span></p>';
+            $('#chatbox').append(userHTML);
+            $('#messageInput').val('');
+            $.get('/getResponse', { userMessage: userText }).done(function (data) {
+                var returnedMessage = "<p class='botText'><strong>Chatbot:</strong><span>" + data.botResponse + "</span></p>";
+                $('#chatbox').append(returnedMessage);
+                $('#chatbox').scrollTop($('#chatbox').prop('scrollHeight'));
+            });
+        }
+    </script>
+</body>
+</html>
